@@ -1,34 +1,63 @@
-# LLM Paper Summarizer for Zotero
 
-在 Zotero 中使用 LLM 自动总结论文并生成笔记。
+# Zotero 用 LLM 論文サマライザー
 
-Automatically summarize academic papers and generate notes in Zotero using an LLM.
+LLM を用いて、Zotero 上の学術論文を自動要約し、ノートを生成します。
 
-工作流程：以 [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) 脚本的形式实现。在 zotero 中新增论文时，zotero-actions-tags 触发 JavaScript 脚本，获取论文的 PDF 文件地址和论文名，并向服务器发送 PDF 进行解析与分割。之后本地调用 LLM API 总结论文。获得总结后将生成的 markdown 发送给服务器转换为 html。最后将 html 总结写入到论文笔记中。
+## 概要
 
-Workflow: this tool is implemented as a script for [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags). When a new paper is added to Zotero, the zotero-actions-tags plugin triggers a JavaScript script to retrieve the PDF file path and paper title. It then sends the PDF to a server for analysis and segmentation. Next, the local system calls the LLM API to generate a summary of the paper. Once the summary is obtained, the generated markdown is sent to the server to be converted into HTML. Finally, the HTML summary is written into the paper's note.
+Zotero に追加した論文を自動的に要約し、要約結果をノートとして保存するツールです。
+
+### ワークフロー
+
+本ツールは、[zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) 用のスクリプトとして実装されています。
+
+1. Zotero に新しい論文が追加される
+2. zotero-actions-tags が JavaScript スクリプトをトリガー
+3. 論文の PDF ファイルパスと論文タイトルを取得
+4. PDF をサーバーへ送信し、解析・分割を実行
+5. ローカル環境で LLM API を呼び出し、論文を要約
+6. 生成された Markdown をサーバーへ送信し、HTML に変換
+7. HTML 化された要約を Zotero の論文ノートとして書き込み
 
 ![example](https://qyzhang-obsidian.oss-cn-hangzhou.aliyuncs.com/20250124100826.png)
 
-## 部署 | Setup
+---
 
-安装 [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) 插件，并按照下图配置。
+## デプロイ | Setup
 
-Install the [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) plugin and configure it as shown below:
+[zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) プラグインをインストールし、以下の画像のように設定してください。
 
 ![zotero-actions-tags settings](https://qyzhang-obsidian.oss-cn-hangzhou.aliyuncs.com/20250124094839.png)
 
 ![edit action](https://qyzhang-obsidian.oss-cn-hangzhou.aliyuncs.com/20250124095407.png)
 
-## 配置 | Configuration
+---
 
-关键点：如果使用 [ZotMoov](https://github.com/wileyyugioh/zotmoov) 或 [ZotFile](https://github.com/jlegewie/zotfile) 把论文保存在 OneDrive 等同步盘上，将 `only_link_file` 设为 `true`；根据想要使用的大模型 API 配置 `openaiBaseUrl`、`modelName` 和 `apiKey`；将 `chunkSize` 调整为模型上下文长度；将 `stuffPrompt`、`mapPrompt` 和 `reducePrompt` 翻译成你的语言，注意保留其中的 `{title}` 和 `{text}` 不变。
+## 設定 | Configuration
 
-TLDR: If you use [ZotMoov](https://github.com/wileyyugioh/zotmoov) or [ZotFile](https://github.com/jlegewie/zotfile) to save your papers on OneDrive or other synchronized drives, set `only_link_file` to `true`; configure `openaiBaseUrl`, `modelName`, and `apiKey` according to the LLM API you intend to use; adjust `chunkSize` to match the model's context length; translate `stuffPrompt`, `mapPrompt`, and `reducePrompt` into your preferred language, ensuring that the placeholders `{title}` and `{text}` remain unchanged.
+### 重要なポイント
 
-在 `zotero_script.js` 代码的顶端包含了一些配置，如下所示。
+* [ZotMoov](https://github.com/wileyyugioh/zotmoov) や
+  [ZotFile](https://github.com/jlegewie/zotfile) を使って、論文 PDF を OneDrive などの同期ドライブに保存している場合は、
+  **`only_link_file` を `true` に設定**してください。
+* 使用する LLM API に応じて
+  **`openaiBaseUrl` / `modelName` / `apiKey`** を設定してください。
+* **`chunkSize`** は、使用するモデルのコンテキスト長に合わせて調整してください。
+* **`stuffPrompt` / `mapPrompt` / `reducePrompt`** は、自分の使用言語に翻訳してください。
+  ただし、**`{title}` と `{text}` は変更しないでください。**
 
-At the beginning of the `zotero_script.js` file, you’ll find some configurable options:
+### TL;DR（要点まとめ）
+
+* ZotMoov / ZotFile で「Link to File」形式を使っている → `only_link_file = true`
+* LLM API に合わせて `openaiBaseUrl`, `modelName`, `apiKey` を設定
+* モデルのコンテキスト長に合わせて `chunkSize` を調整
+* プロンプトは翻訳してよいが `{title}`, `{text}` はそのまま
+
+---
+
+## 設定項目（zotero_script.js）
+
+`zotero_script.js` の先頭には、以下のような設定項目があります。
 
 ```js
 let serverUrl = "https://paper_summarizer.jianyue.tech";
@@ -46,28 +75,45 @@ let mapPrompt = "";
 let reducePrompt = "";
 ```
 
-- **`serverUrl`**：用于解析 PDF 文件和将总结后的 markdown 转换为 html 的服务器地址。默认为作者公开的服务器。**如果你需要对敏感文件总结，推荐自己部署**，只需 clone 本仓库后执行 `python server.py` 即可。
-- **`only_link_file`**：配合 [ZotMoov](https://github.com/wileyyugioh/zotmoov) 或 [ZotFile](https://github.com/jlegewie/zotfile) 使用。如果使用这两个或类似的插件将论文 PDF 以 Zotero 的 "Link to File" 形式保存，则应设置 `only_link_file` 为 `true`，否则设置为 `false`。
-- **`timeout`**：配合 [ZotMoov](https://github.com/wileyyugioh/zotmoov) 或 [ZotFile](https://github.com/jlegewie/zotfile) 使用。在新增论文时，最多等待多少秒后检查 PDF 是否下载完成。
-- **`openaiBaseUrl`**：OpenAI 兼容的 api 地址。具体的地址取决于使用的模型提供商，默认是通义千问，详见 <https://www.aliyun.com/product/bailian>。
-- **`modelName`**：调用模型 API 时提供的模型名。
-- **`apiKey`**：LLM 的 api key。
-- **`chunkSize`**：模型的上下文大小。超过上下文的 PDF 文档需要拆分成多个分片，使用 map-reduce 方案总结。
-- **`chunkOverlap`**：map-reduce 方案下分片间重合的大小。
-- **`stuffPrompt`**：当 PDF 文档没有超出模型上下文时使用的提示词。
-- **`mapPrompt`**：map-reduce 方案下 map 阶段使用的提示词。
-- **`reducePrompt`**：map-reduce 方案下 reduce 阶段使用的提示词。
+### 各設定の説明（日本語）
 
-<br>
+* **`serverUrl`**
+  PDF の解析および、要約後の Markdown を HTML に変換するためのサーバー URL。
+  デフォルトでは作者が公開しているサーバーを使用。
+  **機密性の高い論文を扱う場合は、自前でサーバーを立てることを推奨**。
+  リポジトリを clone して `python server.py` を実行するだけで利用可能。
 
-- **`serverUrl`**: The server URL for parsing PDF files and converting the summarized markdown into HTML. Defaults to the author's public server. **If you need to summarize sensitive files, it's recommended to deploy your own server**; simply clone this repository and run `python server.py`.
-- **`only_link_file`**: Use this in conjunction with [ZotMoov](https://github.com/wileyyugioh/zotmoov) or [ZotFile](https://github.com/jlegewie/zotfile). If you save PDF papers in Zotero as "Link to File" using these (or similar) plugins, set `only_link_file` to `true`; otherwise, set it to `false`.
-- **`timeout`**: Also used with [ZotMoov](https://github.com/wileyyugioh/zotmoov) or [ZotFile](https://github.com/jlegewie/zotfile). This parameter specifies the maximum number of seconds to wait after adding a new paper before checking whether the PDF download is complete.
-- **`openaiBaseUrl`**: The API endpoint compatible with OpenAI. The specific URL depends on the model provider you are using; by default, it is Qwen, see <https://www.aliyun.com/product/bailian>.
-- **`modelName`**: The model name provided when calling the API.
-- **`apiKey`**: The API key for the LLM.
-- **`chunkSize`**: The model's context size. PDF documents that exceed the context window must be split into multiple segments and summarized using a map-reduce approach.
-- **`chunkOverlap`**: The overlap size between segments when using the map-reduce approach.
-- **`stuffPrompt`**: The prompt used when the entire PDF document fits within the model’s context window.
-- **`mapPrompt`**: The prompt used during the map phase of the map-reduce approach.
-- **`reducePrompt`**: The prompt used during the reduce phase of the map-reduce approach.
+* **`only_link_file`**
+  ZotMoov / ZotFile などを使い、PDF を Zotero に「Link to File」として保存している場合は `true`。
+  それ以外の場合は `false`。
+
+* **`timeout`**
+  ZotMoov / ZotFile 使用時に、新しい論文追加後、PDF のダウンロード完了を待つ最大秒数。
+
+* **`openaiBaseUrl`**
+  OpenAI 互換 API のエンドポイント。
+  使用するモデル提供元によって異なる。
+  デフォルトは **通義千問（Qwen）**。
+  詳細: [https://www.aliyun.com/product/bailian](https://www.aliyun.com/product/bailian)
+
+* **`modelName`**
+  API 呼び出し時に指定するモデル名。
+
+* **`apiKey`**
+  LLM の API キー。
+
+* **`chunkSize`**
+  モデルのコンテキストサイズ。
+  PDF がこのサイズを超える場合は、map-reduce 方式で分割要約される。
+
+* **`chunkOverlap`**
+  map-reduce 方式における、分割チャンク間の重なりサイズ。
+
+* **`stuffPrompt`**
+  PDF 全体がコンテキスト内に収まる場合に使用するプロンプト。
+
+* **`mapPrompt`**
+  map-reduce 方式の **map フェーズ**で使用するプロンプト。
+
+* **`reducePrompt`**
+  map-reduce 方式の **reduce フェーズ**で使用するプロンプト。
