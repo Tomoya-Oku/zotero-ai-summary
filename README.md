@@ -1,6 +1,7 @@
 # LLM-based Paper Summarization Plugin for Zotero
 
 This plugin automatically summarizes papers added to Zotero and saves the generated summaries as notes.
+Original: https://github.com/cs-qyzhang/zotero-ai-summary
 
 ## Workflow
 
@@ -22,10 +23,12 @@ See [zotero-deb](https://github.com/retorquere/zotero-deb/).
 ### Install zotero-actions-tags
 
 Install the [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) plugin and configure it as shown below.
+<img width="1142" height="790" alt="image" src="https://github.com/user-attachments/assets/9ac71534-fdc2-4cdb-a712-87bf2a51f4c3" />
+<img width="485" height="577" alt="image" src="https://github.com/user-attachments/assets/ae3f7c82-f9d4-4656-9e32-085ae7447d7a" />
 
 ### Configuration
 
-### Important Notes
+#### Important Notes
 
 - If you use [ZotMoov](https://github.com/wileyyugioh/zotmoov) or  
   [ZotFile](https://github.com/jlegewie/zotfile) to store PDFs in a synced drive
@@ -35,7 +38,7 @@ Install the [zotero-actions-tags](https://github.com/windingwind/zotero-actions-
 - You may translate **`stuffPrompt` / `mapPrompt` / `reducePrompt`** into your preferred language,  
   but **do not modify `{title}` and `{text}`**.
 
-### TL;DR
+#### TLDR
 
 - Using ZotMoov / ZotFile with “Link to File” → `only_link_file = true`
 - Configure `openaiBaseUrl`, `modelName`, `apiKey` for your LLM provider
