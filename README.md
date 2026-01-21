@@ -1,4 +1,4 @@
-# LLM-based Paper Summarization Plugin for Zotero
+# LLM-based Paper Summary Plugin for Zotero
 
 This plugin automatically summarizes papers added to Zotero and saves the generated summaries as notes.
 Original: https://github.com/cs-qyzhang/zotero-ai-summary
@@ -17,12 +17,30 @@ This tool is implemented as a script for [zotero-actions-tags](https://github.co
 
 ## Deployment | Setup
 
-### How to install Zotero on Linux (Ubuntu 22.04)
+### Install Zotero (if you haven't installed it)
+Windows, Mac, Linux: https://www.zotero.org/
+
+#### How to install Zotero.deb on Linux (Ubuntu 22.04)
 See [zotero-deb](https://github.com/retorquere/zotero-deb/).
 
-### Install zotero-actions-tags
+### Install zotero-actions-tags plugin
+1. Download "zotero-actions-tags.xpi" from here: [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) <br>
+  If you cannot *.xpi file directly, you should try changing access-point (tethering, etc.)
+1. Open Zotero
+1. Tools-> Plugins
+1. ⚙️ -> Select Plugin From File
+1. Select zotero-actions-tags.xpi
 
-Install the [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) plugin and configure it as shown below.
+### Generate zotero-ai-summary script
+1. Rename ".env.example" into ".env" and fill each parameters.
+2. Run "generate_script.py", then "zotero_ai_summary_script.js" will be generated.
+
+### Apply script to zotero-actions-tags
+1. Edit -> Settings
+1. Open Action & Tags tab
+1. Configure it as shown below.<br>
+  ("zotero_scirpts.js" in the image is corresponded with "zotero_ai_summary_script.js")
+
 <img width="1142" height="790" alt="image" src="https://github.com/user-attachments/assets/9ac71534-fdc2-4cdb-a712-87bf2a51f4c3" />
 <img width="485" height="577" alt="image" src="https://github.com/user-attachments/assets/ae3f7c82-f9d4-4656-9e32-085ae7447d7a" />
 
