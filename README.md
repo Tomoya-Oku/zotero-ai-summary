@@ -16,9 +16,14 @@ This tool is implemented as a script for [zotero-actions-tags](https://github.co
 
 ## Deployment | Setup
 
+### How to install Zotero on Linux (Ubuntu 22.04)
+See [zotero-deb](https://github.com/retorquere/zotero-deb/).
+
+### Install zotero-actions-tags
+
 Install the [zotero-actions-tags](https://github.com/windingwind/zotero-actions-tags) plugin and configure it as shown below.
 
-## Configuration
+### Configuration
 
 ### Important Notes
 

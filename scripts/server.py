@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 from fastapi import FastAPI, UploadFile, Form, HTTPException, Request
 from datetime import datetime
-from paper_summary import PaperSummarizer
+from scripts.paper_summary import PaperSummarizer
 import sqlite3
 import uvicorn
 from langchain.text_splitter import RecursiveCharacterTextSplitter

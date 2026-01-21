@@ -1,24 +1,35 @@
 /**
  * Generate paper summary using LLM
  * @author Qiuyang Zhang
- * @usage https://github.com/cs-qyzhang/zotero-ai-summary
+ * @contributor Tomoya Oku
+ * @usage https://github.com/Tomoya-Oku/zotero-ai-summary
  */
+
+import 'dotenv/config';
 
 /************* Configurations Start *************/
 // Server URL used to parse PDF and convert Markdown to HTML
 let serverUrl = "https://paper_summarizer.jianyue.tech";
+
 // Set this to true if you manage PDFs as "Link to File" using ZotMoov or ZotFile. Otherwise, set it to false
 let only_link_file = false;
+
 // Used in conjunction with ZotMoov or ZotFile. Specifies the maximum number of seconds to wait after adding a paper to check if the PDF download is complete.
 let timeout = 30;
+
+// Authenticated OpenAI API base URL
+let openaiBaseUrl = "https://api.openai.com/v1";
+
 // OpenAI-compatible API base URL
-let openaiBaseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1";
+// let openaiBaseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1";
+
 // Gemini
 // let openaiBaseUrl = "https://generativelanguage.googleapis.com/v1beta/openai/";
+
 // Model name
 let modelName = "qwen-plus-latest";
 // API key
-let apiKey = "sk-xxxxxxxxxxxxx";
+let apiKey = ;
 // Model's max context length
 let chunkSize = 64000;
 // The overlap between chunks of text to process
@@ -199,7 +210,7 @@ try {
         try {
             const data = await parseResponse.json();
             message = data.detail || data.error?.message;
-        } catch (error) {}
+        } catch (error) { }
         throw new Error(`${serverUrl} HTTP Error: ${parseResponse.status} ${parseResponse.statusText}${message ? ` - ${message}` : ''}`);
     }
     let parseResult, splits;
@@ -233,7 +244,7 @@ try {
         try {
             const data = await htmlResponse.json();
             message = data.detail || data.error?.message;
-        } catch (error) {}
+        } catch (error) { }
         throw new Error(`${serverUrl} HTTP Error: ${htmlResponse.status} ${htmlResponse.statusText}${message ? ` - ${message}` : ''}`);
     }
     let htmlResult;
@@ -281,7 +292,7 @@ async function openaiRequest(message) {
         try {
             const data = await response.json();
             message = data.detail || data.error?.message;
-        } catch (error) {}
+        } catch (error) { }
         throw new Error(`${openaiBaseUrl} HTTP Error: ${response.status} ${response.statusText}${message ? ` - ${message}` : ''}`);
     }
 
